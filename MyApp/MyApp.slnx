@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MyApp.Android/MyApp.Android.csproj" />
+  <Project Path="MyApp.Desktop/MyApp.Desktop.csproj" />
+  <Project Path="MyApp/MyApp.csproj" />
+</Solution>
