@@ -2,17 +2,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:MyApp.ViewModels"
+             xmlns:data="using:MyApp.Data"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MyApp.Views.MainView"
-             x:DataType="vm:MainViewModel">
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
+             x:Class="MyApp.Views.MainView">
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+	<TabControl>
+		<TabItem Header="Команды">
+			<ListBox x:Name="TeamsList" Margin="10">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="data:Team">
+						<TextBlock Text="{Binding TeamName}" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</TabItem>
+
+		<TabItem Header="Квесты">
+			<ListBox x:Name="QuestsList" Margin="10">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="data:Quest">
+						<TextBlock Text="{Binding QuestTitle}" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</TabItem>
+
+		<TabItem Header="Прохождения">
+			<ListBox x:Name="PlaythroughsList" Margin="10">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="data:Playthrough">
+						<TextBlock>
+							<Run Text="{Binding StartTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
+							<Run Text=" | Команда: " />
+							<Run Text="{Binding Team.TeamName}" />
+							<Run Text=" | Квест: " />
+							<Run Text="{Binding Quest.QuestTitle}" />
+							<Run Text=" | Успех: " />
+							<Run Text="{Binding IsSuccess}" />
+						</TextBlock>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</TabItem>
+	</TabControl>
 </UserControl>
