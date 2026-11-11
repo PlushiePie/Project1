@@ -3,111 +3,107 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:data="using:MyApp.Data"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:Class="MyApp.Views.MainView">
 
 	<TabControl>
 		<TabItem Header="Команды">
-			<Grid ColumnDefinitions="Auto, *">
-				<ListBox x:Name="TeamsList" Grid.Column="0" Width="300" Margin="10" SelectionChanged="TeamsList_SelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate x:DataType="data:Team">
-							<TextBlock Text="{Binding TeamName}" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-				
-				<StackPanel Grid.Column="1" Margin="10" Spacing="10">
+			<ScrollViewer>
+				<StackPanel Margin="10" Spacing="10">
+					<ListBox x:Name="TeamsList" MaxHeight="200" SelectionChanged="TeamsList_SelectionChanged">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="data:Team">
+								<TextBlock Text="{Binding TeamName}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+
 					<TextBlock Text="Название команды:" />
-					<TextBox x:Name="TeamNameBox" Width="250" />
+					<TextBox x:Name="TeamNameBox" />
 
 					<TextBlock Text="Количество человек:" />
-					<TextBox x:Name="TeamMembersBox" Width="250" />
+					<TextBox x:Name="TeamMembersBox" />
 
-					<CheckBox x:Name="TeamIsExperiencedBox" Content="Опытная команда" />
+					<CheckBox x:Name="TeamIsExperiencedBox" Content="Опытная команда" MinHeight="40" />
 
-					<StackPanel Orientation="Horizontal" Spacing="10">
-						<Button Content="Добавить" Click="AddTeam_Click" />
-						<Button Content="Сохранить" Click="SaveTeam_Click" />
-						<Button Content="Удалить" Click="DeleteTeam_Click" />
-					</StackPanel>
+					<Button Content="Добавить" Click="AddTeam_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Сохранить" Click="SaveTeam_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Удалить" Click="DeleteTeam_Click" MinHeight="40" HorizontalAlignment="Stretch" />
 
-					<TextBlock x:Name="TeamMessage" Foreground="Red" />
+					<TextBlock x:Name="TeamMessage" Foreground="Red" TextWrapping="Wrap" />
 				</StackPanel>
-			</Grid>
+			</ScrollViewer>
 		</TabItem>
 
 		<TabItem Header="Квесты">
-			<Grid ColumnDefinitions="Auto, *">
-				<ListBox x:Name="QuestsList" Grid.Column="0" Width="300" Margin="10" SelectionChanged="QuestsList_SelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate x:DataType="data:Quest">
-							<TextBlock Text="{Binding QuestTitle}" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+			<ScrollViewer>
+				<StackPanel Margin="10" Spacing="10">
+					<ListBox x:Name="QuestsList" MaxHeight="200" SelectionChanged="QuestsList_SelectionChanged">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="data:Quest">
+								<TextBlock Text="{Binding QuestTitle}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 
-				<StackPanel Grid.Column="1" Margin="10" Spacing="10">
 					<TextBlock Text="Название квеста:" />
-					<TextBox x:Name="QuestTitleBox" Width="250" />
+					<TextBox x:Name="QuestTitleBox" />
 
 					<TextBlock Text="Сложность (1-5):" />
-					<TextBox x:Name="QuestDifficultyBox" Width="250" />
+					<TextBox x:Name="QuestDifficultyBox" />
 
 					<TextBlock Text="Длительность (мин):" />
-					<TextBox x:Name="QuestDurationBox" Width="250" />
+					<TextBox x:Name="QuestDurationBox" />
 
 					<TextBlock Text="Количество реактивов:" />
-					<TextBox x:Name="QuestReagentsBox" Width="250" />
+					<TextBox x:Name="QuestReagentsBox" />
 
-					<StackPanel Orientation="Horizontal" Spacing="10">
-						<Button Content="Добавить" Click="AddQuest_Click" />
-						<Button Content="Сохранить" Click="SaveQuest_Click" />
-						<Button Content="Удалить" Click="DeleteQuest_Click" />
-					</StackPanel>
+					<Button Content="Добавить" Click="AddQuest_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Сохранить" Click="SaveQuest_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Удалить" Click="DeleteQuest_Click" MinHeight="40" HorizontalAlignment="Stretch" />
 
-					<TextBlock x:Name="QuestMessage" Foreground="Red" />
+					<TextBlock x:Name="QuestMessage" Foreground="Red" TextWrapping="Wrap" />
 				</StackPanel>
-			</Grid>
+			</ScrollViewer>
 		</TabItem>
 
 		<TabItem Header="Прохождения">
-			<Grid ColumnDefinitions="Auto, *">
-				<ListBox x:Name="PlaythroughsList" Grid.Column="0" Width="300" Margin="10">
-					<ListBox.ItemTemplate>
-						<DataTemplate x:DataType="data:Playthrough">
-							<TextBlock>
-								<Run Text="{Binding StartTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
-								<Run Text=" | " />
-								<Run Text="{Binding Team.TeamName}" />
-								<Run Text=" - " />
-								<Run Text="{Binding Quest.QuestTitle}" />
-							</TextBlock>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+			<ScrollViewer>
+				<StackPanel Margin="10" Spacing="10">
+					<ListBox x:Name="PlaythroughsList" MaxHeight="200">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="data:Playthrough">
+								<TextBlock TextWrapping="Wrap">
+									<Run Text="{Binding StartTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
+									<Run Text=" | " />
+									<Run Text="{Binding Team.TeamName}" />
+									<Run Text=" - " />
+									<Run Text="{Binding Quest.QuestTitle}" />
+								</TextBlock>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 
-				<StackPanel Grid.Column="1" Margin="10" Spacing="10">
 					<TextBlock Text="Выберите команду:" />
-					<ComboBox x:Name="PlaythroughTeamCombo" Width="250" />
+					<ComboBox x:Name="PlaythroughTeamCombo" HorizontalAlignment="Stretch" MinHeight="40" />
 
 					<TextBlock Text="Выберите квест:" />
-					<ComboBox x:Name="PlaythroughQuestCombo" Width="250" />
+					<ComboBox x:Name="PlaythroughQuestCombo" HorizontalAlignment="Stretch" MinHeight="40" />
 
-					<TextBlock Text="Дата и время:" />
-					<CalendarDatePicker x:Name="PlaythroughDatePicker" Width="250" />
-					<TimePicker x:Name="PlaythroughTimePicker" Width="250" />
+					<TextBlock Text="Дата:" />
+					<CalendarDatePicker x:Name="PlaythroughDatePicker" HorizontalAlignment="Stretch" MinHeight="40" />
 
-					<CheckBox x:Name="PlaythroughIsSuccessBox" Content="Успешно" />
+					<TextBlock Text="Время:" />
+					<TimePicker x:Name="PlaythroughTimePicker" HorizontalAlignment="Stretch" MinHeight="40" />
 
-					<StackPanel Orientation="Horizontal" Spacing="10">
-						<Button Content="Добавить" Click="AddPlaythrough_Click" />
-						<Button Content="Удалить" Click="DeletePlaythrough_Click" />
-					</StackPanel>
+					<CheckBox x:Name="PlaythroughIsSuccessBox" Content="Успешно" MinHeight="40" />
 
-					<TextBlock x:Name="PlaythroughMessage" Foreground="Red" />
+					<Button Content="Добавить" Click="AddPlaythrough_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Удалить" Click="DeletePlaythrough_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+
+					<TextBlock x:Name="PlaythroughMessage" Foreground="Red" TextWrapping="Wrap" />
 				</StackPanel>
-			</Grid>
+			</ScrollViewer>
 		</TabItem>
 	</TabControl>
 </UserControl>

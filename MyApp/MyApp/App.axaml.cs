@@ -1,8 +1,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using MyApp.ViewModels;
+using Avalonia.Threading;
 using MyApp.Views;
+using System;
 
 namespace MyApp;
 
@@ -11,30 +12,23 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-#if DEBUG
-        this.AttachDeveloperTools();
-#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Dispatcher.UIThread.UnhandledException += (sender, e) =>
+        {
+            Console.WriteLine($"!!! UNHANDLED EXCEPTION: {e.Exception.Message}");
+            Console.WriteLine($"!!! STACK TRACE: {e.Exception.StackTrace}");
+        };
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel()
-            };
+            desktop.MainWindow = new MainWindow();
         }
-        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = new MainViewModel() };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
-            };
+            singleView.MainView = new MainView();
         }
 
         base.OnFrameworkInitializationCompleted();

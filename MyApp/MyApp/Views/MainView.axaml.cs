@@ -20,19 +20,31 @@ public partial class MainView : UserControl
 
     private void LoadAllData()
     {
-        using var db = new AppDbContext();
-        db.Database.EnsureCreated();
-        DbSeed.Seed(db);
+        try
+        {
+            using var db = new AppDbContext();
+            db.Database.EnsureCreated();
+            DbSeed.Seed(db);
 
-        TeamsList.ItemsSource = db.Teams.ToList();
-        QuestsList.ItemsSource = db.Quests.ToList();
-        PlaythroughsList.ItemsSource = db.Playthroughs.Include(p => p.Team).Include(p => p.Quest).ToList();
+            TeamsList.ItemsSource = db.Teams.ToList();
+            QuestsList.ItemsSource = db.Quests.ToList();
 
-        PlaythroughTeamCombo.ItemsSource = db.Teams.ToList();
-        PlaythroughTeamCombo.DisplayMemberBinding = new Avalonia.Data.Binding("TeamName");
+            var playthroughs = db.Playthroughs
+                .Include(p => p.Team)
+                .Include(p => p.Quest)
+                .ToList();
+            PlaythroughsList.ItemsSource = playthroughs;
 
-        PlaythroughQuestCombo.ItemsSource = db.Quests.ToList();
-        PlaythroughQuestCombo.DisplayMemberBinding = new Avalonia.Data.Binding("QuestTitle");
+            PlaythroughTeamCombo.ItemsSource = db.Teams.ToList();
+            PlaythroughTeamCombo.DisplayMemberBinding = new Avalonia.Data.Binding("TeamName");
+
+            PlaythroughQuestCombo.ItemsSource = db.Quests.ToList();
+            PlaythroughQuestCombo.DisplayMemberBinding = new Avalonia.Data.Binding("QuestTitle");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"!!! ОШИБКА В LOADDATA: {ex.Message}");
+        }
     }
 
     private void TeamsList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -59,7 +71,6 @@ public partial class MainView : UserControl
             using var db = new AppDbContext();
             db.Teams.Add(new Team { TeamName = TeamNameBox.Text, MembersCount = members, IsExperienced = TeamIsExperiencedBox.IsChecked ?? false });
             db.SaveChanges();
-
             TeamMessage.Text = "Команда добавлена!";
             LoadAllData();
         }
@@ -140,7 +151,6 @@ public partial class MainView : UserControl
             using var db = new AppDbContext();
             db.Quests.Add(new Quest { QuestTitle = QuestTitleBox.Text, DifficultyLevel = diff, DurationMinutes = dur, ReagentsCount = reag });
             db.SaveChanges();
-
             QuestMessage.Text = "Квест добавлен!";
             LoadAllData();
         }
@@ -224,7 +234,6 @@ public partial class MainView : UserControl
 
             db.Playthroughs.Add(p);
             db.SaveChanges();
-
             PlaythroughMessage.Text = "Прохождение добавлено!";
             LoadAllData();
         }
