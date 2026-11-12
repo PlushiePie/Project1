@@ -70,7 +70,7 @@
 		<TabItem Header="Прохождения">
 			<ScrollViewer>
 				<StackPanel Margin="10" Spacing="10">
-					<ListBox x:Name="PlaythroughsList" MaxHeight="200">
+					<ListBox x:Name="PlaythroughsList" MaxHeight="200" SelectionChanged="PlaythroughsList_SelectionChanged">
 						<ListBox.ItemTemplate>
 							<DataTemplate x:DataType="data:Playthrough">
 								<TextBlock TextWrapping="Wrap">
@@ -99,6 +99,7 @@
 					<CheckBox x:Name="PlaythroughIsSuccessBox" Content="Успешно" MinHeight="40" />
 
 					<Button Content="Добавить" Click="AddPlaythrough_Click" MinHeight="40" HorizontalAlignment="Stretch" />
+					<Button Content="Сохранить" Click="SavePlaythrough_Click" MinHeight="40" HorizontalAlignment="Stretch" />
 					<Button Content="Удалить" Click="DeletePlaythrough_Click" MinHeight="40" HorizontalAlignment="Stretch" />
 
 					<TextBlock x:Name="PlaythroughMessage" Foreground="Red" TextWrapping="Wrap" />
