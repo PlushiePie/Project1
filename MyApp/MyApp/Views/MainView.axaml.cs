@@ -11,6 +11,7 @@ public partial class MainView : UserControl
 {
     private int? _selectedTeamId;
     private int? _selectedQuestId;
+    private int? _selectedPlaythroughId;
 
     public MainView()
     {
@@ -43,7 +44,7 @@ public partial class MainView : UserControl
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"!!! ОШИБКА В LOADDATA: {ex.Message}");
+            PlaythroughMessage.Text = $"Ошибка загрузки данных: {ex.Message}";
         }
     }
 
@@ -207,6 +208,26 @@ public partial class MainView : UserControl
         catch (Exception ex) { QuestMessage.Text = $"Ошибка БД: {ex.Message}"; }
     }
 
+    private void PlaythroughsList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (PlaythroughsList.SelectedItem is Playthrough p)
+        {
+            _selectedPlaythroughId = p.Id;
+
+            var team = PlaythroughTeamCombo.ItemsSource?.Cast<Team>().FirstOrDefault(t => t.Id == p.TeamId);
+            var quest = PlaythroughQuestCombo.ItemsSource?.Cast<Quest>().FirstOrDefault(q => q.Id == p.QuestId);
+
+            PlaythroughTeamCombo.SelectedItem = team;
+            PlaythroughQuestCombo.SelectedItem = quest;
+
+            PlaythroughDatePicker.SelectedDate = p.StartTime.Date;
+            PlaythroughTimePicker.SelectedTime = p.StartTime.TimeOfDay;
+            PlaythroughIsSuccessBox.IsChecked = p.IsSuccess;
+
+            PlaythroughMessage.Text = "";
+        }
+    }
+
     private void AddPlaythrough_Click(object? sender, RoutedEventArgs e)
     {
         if (PlaythroughTeamCombo.SelectedItem is not Team selectedTeam ||
@@ -220,7 +241,6 @@ public partial class MainView : UserControl
         try
         {
             using var db = new AppDbContext();
-
             var time = PlaythroughTimePicker.SelectedTime ?? TimeSpan.Zero;
             var dateTime = PlaythroughDatePicker.SelectedDate.Value.Date + time;
 
@@ -236,6 +256,38 @@ public partial class MainView : UserControl
             db.SaveChanges();
             PlaythroughMessage.Text = "Прохождение добавлено!";
             LoadAllData();
+        }
+        catch (Exception ex) { PlaythroughMessage.Text = $"Ошибка БД: {ex.Message}"; }
+    }
+
+    private void SavePlaythrough_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_selectedPlaythroughId == null) { PlaythroughMessage.Text = "Выберите прохождение для изменения."; return; }
+        if (PlaythroughTeamCombo.SelectedItem is not Team selectedTeam ||
+            PlaythroughQuestCombo.SelectedItem is not Quest selectedQuest ||
+            PlaythroughDatePicker.SelectedDate == null)
+        {
+            PlaythroughMessage.Text = "Ошибка: Выберите команду, квест и дату.";
+            return;
+        }
+
+        try
+        {
+            using var db = new AppDbContext();
+            var p = db.Playthroughs.Find(_selectedPlaythroughId);
+            if (p != null)
+            {
+                p.TeamId = selectedTeam.Id;
+                p.QuestId = selectedQuest.Id;
+                var time = PlaythroughTimePicker.SelectedTime ?? TimeSpan.Zero;
+                p.StartTime = PlaythroughDatePicker.SelectedDate.Value.Date + time;
+                p.IsSuccess = PlaythroughIsSuccessBox.IsChecked ?? false;
+
+                db.SaveChanges();
+                PlaythroughMessage.Text = "Прохождение сохранено!";
+                _selectedPlaythroughId = null;
+                LoadAllData();
+            }
         }
         catch (Exception ex) { PlaythroughMessage.Text = $"Ошибка БД: {ex.Message}"; }
     }
@@ -257,6 +309,7 @@ public partial class MainView : UserControl
                 db.Playthroughs.Remove(p);
                 db.SaveChanges();
                 PlaythroughMessage.Text = "Прохождение удалено!";
+                _selectedPlaythroughId = null;
                 LoadAllData();
             }
         }
